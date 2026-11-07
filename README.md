@@ -1,48 +1,216 @@
 # AI Text Tools | MentisPrep Weeks 10 + 11
 
-**Class:** Build a structured event extractor. **Homework:** Extend a document summarizer.
-Both projects use **Python + Streamlit + Google Gemini**.
+In this project, we'll build two AI-powered applications using **Python, Streamlit, and Google Gemini**.
 
-## Setup (do this before class if possible)
-1. Install Python 3.11+ and VS Code.
-2. Get your **own** free-tier Gemini API key at https://aistudio.google.com/apikey (follow instructor/guardian guidance for accounts).
-3. Open a terminal at this repository's root.
-4. Create and activate a virtual environment:
-   - Mac/Linux: `python3 -m venv .venv && source .venv/bin/activate`
-   - Windows PowerShell: `py -m venv .venv; .venv\Scripts\Activate.ps1`
-5. `python -m pip install -r requirements.txt`
-6. Copy `.env.example` to `.env` and replace the placeholder with **your** API key. Never paste or commit your key in a public repository.
-7. Confirm the configured `GEMINI_MODEL` is available on your free tier in Google AI Studio. The model in `.env.example` is a starting point, not a guarantee of availability.
+- **Week 10 (In Class):** Structured Event Extractor
+- **Week 11 (Homework):** Five-Bullet Document Summarizer
 
-## Run Week 10 in class
-`python -m streamlit run week10_event_extractor/app.py`
+You'll learn how to extract structured information from text, work with JSON, validate AI outputs, and summarize documents.
 
-- Checkpoint 1: Explain each `Event` schema field/type.
-- Checkpoint 2: Finish `extract_event()` using Gemini's structured JSON output + Pydantic model.
-- Checkpoint 3: Display fields and download validated JSON.
-- Checkpoint 4: Test the three event announcements in `sample_data/events.txt`.
-- Answer: Why should missing fields become `None` instead of guesses? Does valid JSON prove a fact is true?
+No coding or setup is required before class. We'll complete the setup together!
 
-## Run Week 11 homework
-`python -m streamlit run week11_document_summarizer/app.py`
+---
 
-- Complete UTF-8 `.txt` upload decoding in `read_source()`.
-- Implement a prompt that produces **five bullets** and one `Limitation:` sentence, grounded only in source text.
-- Reject empty and overly long inputs (12,000-character maximum).
-- Test **two** documents in `sample_data/`; record important omissions or unsupported claims.
-- Check the output has exactly five bullets. Remember a prompt alone doesn't guarantee format.
+## Part 1: Project Setup (In Class)
 
-## API syntax hints (Gemini)
-- `from google import genai` and `from google.genai import types`
-- `client = get_client()`
-- `response = client.models.generate_content(model=get_model(), contents=prompt, config=types.GenerateContentConfig(response_mime_type="application/json", response_schema=Event))`
-- `response.parsed` is the model-parsed response. Validate before downloading.
+### Step 1: Clone the GitHub Repository
 
-## Troubleshooting
-- **Missing key**: check `.env` is in repo root and contains a real `GEMINI_API_KEY`.
-- **Model not found**: check free-tier model access in AI Studio and update `GEMINI_MODEL`.
-- **429 / quota exhausted**: slow requests or try again later; free-tier limits are shared per project.
-- **ModuleNotFoundError**: activate your `.venv` and re-run `pip install -r requirements.txt`.
-- **Unsafe data**: use only fictional/teacher-approved samples. Free-tier prompts may be used for product improvement.
+Open VS Code and open a new terminal.
 
-Official docs: https://ai.google.dev/gemini-api/docs/structured-output and https://ai.google.dev/gemini-api/docs/pricing
+Clone the repository using:
+
+```bash
+git clone YOUR_REPOSITORY_URL
+```
+
+Navigate into the project:
+
+```bash
+cd ai-text-tools
+```
+
+Open the project folder in VS Code.
+
+### Step 2: Create a Virtual Environment
+
+A virtual environment keeps the Python packages for this project separate from other Python projects on your computer.
+
+**Mac:**
+```bash
+python3 -m venv .venv
+```
+
+**Windows:**
+```powershell
+py -m venv .venv
+```
+
+### Step 3: Activate Your Virtual Environment
+
+**Mac:**
+```bash
+source .venv/bin/activate
+```
+
+**Windows PowerShell:**
+```powershell
+.venv\Scripts\Activate.ps1
+```
+
+After activation, you should see `(.venv)` at the beginning of your terminal prompt.
+
+**Important:** Make sure your virtual environment is activated whenever you're working on this project.
+
+If VS Code asks you to select a Python interpreter, choose the Python interpreter inside `.venv`.
+
+### Step 4: Install Dependencies
+
+With your virtual environment activated, run:
+
+```bash
+python -m pip install -r requirements.txt
+```
+
+This installs the packages needed for our applications:
+
+- `streamlit`: Creates our web application interfaces.
+- `google-genai`: Connects Python to the Gemini API.
+- `pydantic`: Defines and validates structured data.
+- `python-dotenv`: Loads environment variables from our `.env` file.
+
+### Step 5: Get Your Gemini API Key
+
+We'll use the Google Gemini API to power our applications.
+
+1. Visit https://aistudio.google.com/apikey
+2. Sign in to your Google account.
+3. Follow your instructor's guidance to create an API key using a free-tier project.
+4. Copy your new API key.
+
+You will use your own API key for this project.
+
+Do not enable paid billing for this class.
+
+**Important:** Never share your API key, paste it into a public GitHub repository, or include it in screenshots.
+
+### Step 6: Set Up Your `.env` File
+
+Inside your project folder, find the file named:
+
+`.env.example`
+
+Create a new file in the same folder named:
+
+`.env`
+
+Copy the contents of `.env.example` into `.env`.
+
+Your file should look like this:
+
+```dotenv
+GEMINI_API_KEY=your_actual_api_key_here
+GEMINI_MODEL=gemini-3.1-flash-lite
+```
+
+Replace `your_actual_api_key_here` with your own key.
+
+Keep the model specified in the class starter unless your instructor provides a different free-tier model.
+
+**Why are we using a `.env` file?**
+
+A `.env` file lets us store configuration and sensitive information separately from our Python code.
+
+Our `.gitignore` prevents `.env` from being committed to Git.
+
+### Step 7: Run Your First Application
+
+From the project root, run:
+
+```bash
+python -m streamlit run week10_event_extractor/app.py
+```
+
+Streamlit should open a browser tab showing the Event Extractor.
+
+The application interface is provided, but the extraction functionality is not finished yet. We'll implement that together during class.
+
+---
+
+## Part 2: Week 10 - Structured Event Extractor (In Class)
+
+### Our Goal
+
+Build an AI application that takes a messy event announcement and extracts specific information into a structured format.
+
+For example:
+
+**Input:**
+
+"Hey everyone! The robotics club is hosting a competition on Friday at 3 PM in the school gym. Bring your laptops!"
+
+**Expected information:**
+
+```json
+{
+  "title": "Robotics Competition",
+  "date": "Friday",
+  "time": "3 PM",
+  "location": "School gym",
+  "notes": ["Bring your laptops"]
+}
+```
+
+### What We'll Learn
+
+- What JSON is and why programmers use it
+- What schemas are
+- How to define data using Pydantic
+- How to generate structured output using Gemini
+- How to handle missing information using `None` and `null`
+- How to validate AI-generated information
+
+### Class Coding Checkpoints
+
+Open:
+
+`week10_event_extractor/app.py`
+
+**Checkpoint 1: Understand the Schema**
+
+Review the `Event` class and identify each field and its data type.
+
+**Checkpoint 2: Implement the Gemini API Call**
+
+Complete the `extract_event()` function so Gemini returns structured data using our `Event` schema.
+
+**Checkpoint 3: Display and Download JSON**
+
+Display the extracted event details in Streamlit and download the validated output as a JSON file.
+
+**Checkpoint 4: Test Your Extractor**
+
+Use the examples in:
+
+`sample_data/events.txt`
+
+Test three types of announcements:
+
+1. An announcement containing all expected information.
+2. An announcement missing important information.
+3. An announcement containing confusing or incomplete details.
+
+Remember: AI should not invent information that wasn't provided.
+
+---
+
+## Part 3: Week 11 - Five-Bullet Document Summarizer (Homework)
+
+### Our Goal
+
+Build a second AI application that reads documents and summarizes the most important information.
+
+Instead of extracting specific fields, we'll ask Gemini to identify the main ideas.
+
+The application should return:
+
+- Exactly five concise bullet points
