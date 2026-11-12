@@ -21,13 +21,20 @@ def extract_event(raw_text: str) -> Event:
     if not raw_text.strip():
         raise ValueError("Paste an event announcement first.")
     client = get_client()
-    # TODO: Use client.models.generate_content(...)
-    # Add contents with instructions: extract only stated facts; don't guess.
-    # Set config=types.GenerateContentConfig(
-    #     response_mime_type="application/json", response_schema=Event
-    # )
-    # Convert response.parsed into an Event and return it.
-    raise NotImplementedError("Complete CHECKPOINT 2 in extract_event().")
+    response = client.models.generate_content(
+        model = get_model(),
+        contents=(
+            "Extract only the event information explicitly stated in the announcement below. Do not invent missing information. Use null for a missing date, time, or location. Keep dates exactly as stated instead of guessing an exact calendar date.\n\n"
+            f"Announcement: {raw_text}"
+        ),
+        config=types.GenerateContentConfig(
+            response_mime_type="application/json",
+            response_schema=Event,
+        ),
+    )
+    if response.parsed is None:
+        raise ValueError("Gemini did not return parsed event.")
+    return Event.model_validate(response.parsed)
 
 
 st.title("📅 Event Extractor")
