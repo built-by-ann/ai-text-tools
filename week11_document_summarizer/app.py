@@ -34,7 +34,7 @@ pasted = st.text_area(
 
 upload = st.file_uploader(
     "Or upload a text file",
-    type=["_____"]
+    type=["txt"]
 )
 
 
@@ -71,13 +71,13 @@ def validate_source(source):
     # Which string method removes extra whitespace?
     # Hint: We used this in Week 10!
 
-    if not source._____():
+    if not source.strip():
         raise ValueError("Please enter some text first.")
 
     # FILL IN BLANK 3:
     # What variable stores our maximum allowed length?
 
-    if len(source) > _____:
+    if len(source) > MAX_CHARACTERS:
         raise ValueError(
             "Your document is too long! "
             "Please shorten it to 12,000 characters."
@@ -112,9 +112,9 @@ Read the SOURCE document below carefully.
 
 Follow these rules:
 
-1. Write exactly _____ bullet points.
+1. Write exactly 5 bullet points.
 2. Include only the most important information.
-3. Do not _____ information that is not in the source.
+3. Do not fabricate information that is not in the source.
 4. Keep each bullet concise and easy to understand.
 5. After the bullets, write one sentence beginning
    with "Limitation:" explaining what the summary
@@ -174,7 +174,7 @@ if st.button("Summarize Document"):
         # Which Streamlit function displays text?
         # Hint: We used this in Week 10!
 
-        st._____(summary)
+        st.write(summary)
 
     except UnicodeDecodeError:
         st.error(
