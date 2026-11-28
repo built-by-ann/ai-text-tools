@@ -24,13 +24,13 @@ st.title("🖼️ Accessible Image Captioner")
 st.info("Use teacher-approved images of objects, landscapes, or diagrams. No personal photos.")
 
 # BLANK 1: What image format should we add alongside JPG and JPEG?
-uploaded = st.file_uploader("Upload a JPG or PNG", type=["jpg", "jpeg", "_____ ".strip()])
+uploaded = st.file_uploader("Upload a JPG or PNG", type=["jpg", "jpeg", "png".strip()])
 
 
 # CHECKPOINT 2: VALIDATE IMAGE DATA
 # DISCUSS: What is a byte? Why do we limit image size?
 # BLANK 2: Fill in the maximum number of megabytes (5).
-MAX_MB = _____
+MAX_MB = 5
 MAX_BYTES = MAX_MB * 1024 * 1024
 
 
@@ -40,7 +40,7 @@ def validate_image(uploaded_file):
         raise ValueError("The uploaded file is empty.")
 
     # BLANK 3: Which variable holds the maximum allowed size?
-    if len(image_bytes) > _____:
+    if len(image_bytes) > MAX_BYTES:
         raise ValueError("Image must be 5 MB or smaller.")
 
     # The extension is a useful first check; it is not proof a file is safe.
@@ -68,16 +68,16 @@ def validate_image(uploaded_file):
 def caption_image(image_bytes, mime_type):
     client = get_client()
 
-    # BLANK 4: Short accessible image descriptions are called _____ .
+    # BLANK 4: Short accessible image descriptions are called alt text.
     # BLANK 5: What heading tells readers when details are unclear?
     prompt = """
 You are an accessible image captioning assistant.
 Describe ONLY information that is visible in the supplied image.
 
 Return exactly three sections with these headings:
-1. Short _____: One concise sentence about the main visible subject.
+1. Short alt text: One concise sentence about the main visible subject.
 2. Detailed description: Important visible details, spatial relationships, and context.
-3. _____: State important things that cannot be determined confidently. If nothing
+3. Uncertainty: State important things that cannot be determined confidently. If nothing
    important is uncertain, say that there is no notable uncertainty.
 
 Do not invent details, identify people, or guess anyone's ethnicity, health,
@@ -105,7 +105,7 @@ if uploaded is not None:
                 caption = caption_image(image_bytes, mime_type)
             st.subheader("Your Image Description")
             # BLANK 6: Which Streamlit function displays text?
-            st._____(caption)
+            st.write(caption)
         except ValueError as e:
             st.warning(str(e))
         except Exception as e:
